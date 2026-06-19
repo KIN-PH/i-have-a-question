@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>May Tanong Ako 💌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:  #E8537A;
+      --blush: #F9E4EC;
+      --deep:  #1A0A10;
+      --cream: #FFF7F9;
+      --muted: #C9929F;
+      --card:  #FFFFFF;
+      --err:   #D63355;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--blush);
+      font-family: 'DM Sans', sans-serif;
+      padding: 1.5rem;
+    }
+
+    .petals { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .petal {
+      position: absolute; width: 10px; height: 14px;
+      background: var(--rose); border-radius: 50% 0 50% 0;
+      opacity: .18; animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: .18; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    .card {
+      position: relative; z-index: 1;
+      background: var(--card);
+      border-radius: 2rem;
+      padding: 3rem 2.5rem;
+      max-width: 420px; width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(232,83,122,.15), 0 4px 16px rgba(0,0,0,.06);
+    }
+
+    .step { color: var(--muted); font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1rem; }
+    .icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 5vw, 1.9rem);
+      color: var(--deep); margin-bottom: .5rem; line-height: 1.25;
+    }
+    .subtitle { color: var(--muted); font-size: .9rem; margin-bottom: 1.75rem; }
+
+    .input-wrap { position: relative; margin-bottom: .5rem; }
+    input[type="text"] {
+      width: 100%;
+      padding: .85rem 1.25rem;
+      border: 2px solid #F0D6DF;
+      border-radius: .75rem;
+      font-size: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--deep);
+      background: var(--cream);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    input[type="text"]:focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(232,83,122,.15); }
+    input[type="text"].error { border-color: var(--err); box-shadow: 0 0 0 3px rgba(214,51,85,.12); animation: shake .35s ease; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-6px); }
+      40%      { transform: translateX(6px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
+
+    .error-msg {
+      display: none;
+      align-items: center;
+      gap: .4rem;
+      background: #FDEEF2;
+      color: var(--err);
+      font-size: .85rem;
+      font-weight: 500;
+      padding: .6rem 1rem;
+      border-radius: .6rem;
+      margin-bottom: 1rem;
+      text-align: left;
+      border: 1px solid #F5C2CF;
+      animation: fadeIn .2s ease;
+    }
+    .error-msg.show { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .btn {
+      width: 100%;
+      background: var(--rose);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 500;
+      padding: .9rem 1.5rem;
+      border-radius: 999px; border: none;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 6px 20px rgba(232,83,122,.35);
+      margin-top: .5rem;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(232,83,122,.4); }
+    .btn:active { transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="petals" id="petals"></div>
+
+  <div class="card">
+    <span class="step">Question 1</span>
+    <span class="icon">🌸</span>
+    <h1>Bawal ang Liar dito…😏</h1>
+    <p class="subtitle">Ano muna ang pangalan mo, ha?</p>
+
+    <div class="error-msg" id="errMsg">⚠️ Enter your name first!</div>
+
+    <div class="input-wrap">
+      <input type="text" id="nameInput" placeholder="Enter name here…" autocomplete="off" />
+    </div>
+
+    <button class="btn" onclick="proceed()">Next →</button>
+  </div>
+
+  <script>
+    // Petals
+    const c = document.getElementById('petals');
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.width = (6 + Math.random() * 10) + 'px';
+      p.style.height = (8 + Math.random() * 14) + 'px';
+      c.appendChild(p);
+    }
+
+    function proceed() {
+      const input = document.getElementById('nameInput');
+      const err = document.getElementById('errMsg');
+      const val = input.value.trim();
+
+      if (!val) {
+        input.classList.add('error');
+        err.classList.add('show');
+        input.focus();
+        // remove error class after animation
+        setTimeout(() => input.classList.remove('error'), 400);
+        return;
+      }
+
+      err.classList.remove('show');
+      // Save name to sessionStorage so next pages can use it
+      sessionStorage.setItem('userName', val);
+      window.location.href = '2.html';
+    }
+
+    // Allow Enter key
+    document.getElementById('nameInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') proceed();
+    });
+  </script>
+</body>
+</html>

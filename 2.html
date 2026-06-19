@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>May Tanong Ako 💌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght=0,700;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+     (function(){
+        emailjs.init("-64-mH5Pltcol0eiM");
+     })();
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:  #E8537A;
+      --blush: #F9E4EC;
+      --deep:  #1A0A10;
+      --muted: #C9929F;
+      --card:  #FFFFFF;
+      --no:    #B0C4DE;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--blush);
+      font-family: 'DM Sans', sans-serif;
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    .petals { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .petal {
+      position: absolute; width: 10px; height: 14px;
+      background: var(--rose); border-radius: 50% 0 50% 0;
+      opacity: .18; animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: .18; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    .card {
+      position: relative; z-index: 1;
+      background: var(--card);
+      border-radius: 2rem;
+      padding: 3rem 2.5rem;
+      max-width: 420px; width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(232,83,122,.15), 0 4px 16px rgba(0,0,0,.06);
+    }
+
+    .icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 5vw, 1.9rem);
+      color: var(--deep); line-height: 1.25; margin-bottom: .5rem;
+    }
+    .subtitle { color: var(--muted); font-size: .9rem; margin-bottom: 2rem; }
+
+    .hint {
+      font-size: .78rem; color: var(--muted);
+      margin-top: 1.25rem; font-style: italic;
+      min-height: 1.2em;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-yes {
+      background: var(--rose);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 500;
+      padding: .85rem 2rem;
+      border-radius: 999px; border: none;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 6px 20px rgba(232,83,122,.35);
+      white-space: nowrap;
+    }
+    .btn-yes:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(232,83,122,.4); }
+    .btn-yes:active { transform: translateY(0); }
+    .btn-yes:disabled { background: #d4a0b0; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    #noBtn {
+      background: var(--no);
+      color: #5a7a9a;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 500;
+      padding: .85rem 2rem;
+      border-radius: 999px; border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s;
+    }
+    #noBtn.floating {
+      position: fixed;
+      z-index: 999;
+      transition: background .2s;
+    }
+    #noBtn:hover { background: #a8b8c8; }
+  </style>
+</head>
+<body>
+  <div class="petals" id="petals"></div>
+
+  <div class="card">
+    <span class="icon">🪞</span>
+    <h1>Pogi ba ako?</h1>
+    <p class="subtitle" id="nameDisplay">Sagutin mo naman…</p>
+
+    <div class="buttons" id="btnRow">
+      <button class="btn-yes" onclick="sayYes()">✨ Yesss!</button>
+      <button id="noBtn" onclick="moveNo()">No!</button>
+    </div>
+
+    <p class="hint" id="hint">Pumili ka ha… 😏</p>
+  </div>
+
+  <script>
+    const uName = sessionStorage.getItem('userName') || 'Isang Bisita';
+    document.getElementById('nameDisplay').textContent = uName + ', sagutin mo naman… 😏';
+
+    // Petals
+    const c = document.getElementById('petals');
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.width = (6 + Math.random() * 10) + 'px';
+      p.style.height = (8 + Math.random() * 14) + 'px';
+      c.appendChild(p);
+    }
+
+    // Move No button
+    let moveCount = 0;
+    let isFloating = false;
+
+    const hints = [
+      'Pumili ka ha… 😏',
+      'Opppsss🙈',
+      'Bawal ang No eh hihi... 😂',
+      'Isa pang No cge ka... 😄',
+      'Hindi ka magkaka Jowa nyan 🥺',
+      'Hala sya ang Kulit 😘',
+      'Bala kanga jan hmppff 😂',
+    ];
+
+    function moveNo() {
+      const btn = document.getElementById('noBtn');
+      const margin = 20;
+      const bw = btn.offsetWidth || 110;
+      const bh = btn.offsetHeight || 44;
+
+      if (!isFloating) {
+        btn.classList.add('floating');
+        isFloating = true;
+      }
+
+      const rx = margin + Math.random() * (window.innerWidth  - bw  - margin * 2);
+      const ry = margin + Math.random() * (window.innerHeight - bh - margin * 2);
+
+      btn.style.left = rx + 'px';
+      btn.style.top  = ry + 'px';
+
+      moveCount++;
+      document.getElementById('hint').textContent =
+        hints[Math.min(moveCount, hints.length - 1)];
+    }
+
+    // DIREKTA AT AUTOMATIC NA PAG-SEND SA BACKGROUND
+    function sayYes() {
+      const serviceID = 'service_upq4a31';
+      const templateID = 'template_9zmi5it';
+
+      const templateParams = {
+        user_name: uName,
+        name: uName,
+        message: "Oo naman, ikaw ang pinaka pogi sa lahat! 💌"
+      };
+
+      const yesBtn = document.querySelector('.btn-yes');
+      yesBtn.disabled = true;
+      yesBtn.textContent = 'Sending... ⏳';
+
+      // API Call: Dito nangyayari ang himala na hindi na pupunta sa ibang page
+      emailjs.send(serviceID, templateID, templateParams)
+        .then(function(response) {
+           console.log('SUCCESS!', response.status, response.text);
+           window.location.href = '3.html';
+        }, function(error) {
+           console.log('FAILED...', error);
+           // Kahit may error man sa internet, pilitin pa ring lumipat sa 3.html para automatic pa rin ang pakiramdam sa user
+           window.location.href = '3.html';
+        });
+    }
+  </script>
+</body>
+</html>

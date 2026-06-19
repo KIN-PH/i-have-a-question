@@ -124,10 +124,10 @@
     <h1>Bawal ang Liar dito…😏</h1>
     <p class="subtitle">Ano muna ang pangalan mo, ha?</p>
 
-    <div class="error-msg" id="errMsg">⚠️ Enter your name first!</div>
+    <div class="error-msg" id="errMsg">⚠️ Enter your full name first!</div>
 
     <div class="input-wrap">
-      <input type="text" id="nameInput" placeholder="Enter name here…" autocomplete="off" />
+      <input type="text" id="nameInput" placeholder="Enter full name here…" autocomplete="off" />
     </div>
 
     <button class="btn" onclick="proceed()">Next →</button>
@@ -152,17 +152,23 @@
       const err = document.getElementById('errMsg');
       const val = input.value.trim();
 
-      if (!val) {
+      // Hatiin ang input sa pamamagitan ng spaces at salain ang mga walang laman
+      const words = val.split(/\s+/).filter(word => word.length > 0);
+
+      // Kung walang input o mas mababa sa 2 salita (kulang sa firstname at lastname)
+      if (words.length < 2) {
         input.classList.add('error');
+        err.innerText = val === "" ? "⚠️ Enter your name first!" : "⚠️ Please enter your full name (First and Last name)!";
         err.classList.add('show');
         input.focus();
-        // remove error class after animation
+        
+        // Tanggalin ang error class pagkatapos ng shake animation
         setTimeout(() => input.classList.remove('error'), 400);
         return;
       }
 
       err.classList.remove('show');
-      // Save name to sessionStorage so next pages can use it
+      // I-save ang pangalan sa sessionStorage para magamit sa susunod na pages
       sessionStorage.setItem('userName', val);
       window.location.href = '2.html';
     }
